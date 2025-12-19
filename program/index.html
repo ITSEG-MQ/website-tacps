@@ -6,31 +6,46 @@ nav: program
 
 <style>
   /* 强制恢复有序列表数字（避免主题把 list-style 干掉） */
-  ol { 
-    list-style-type: decimal !important; 
-    margin-left: 1.5em; 
+  ol {
+    list-style-type: decimal !important;
+    margin-left: 1.5em;
     padding-left: 1em;
   }
-  ul {
-    margin-left: 1.2em;
+
+  /* 顶层日程用 ul 包裹（通常不想显示圆点），主题若显示圆点可用下面一行关掉 */
+  ul.program {
+    list-style: none !important;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  /* 子弹列表（Panelists / Roadmap / Plans）强制显示圆点 */
+  ul.bullets {
+    list-style-type: disc !important;
+    margin-left: 1.5em;
     padding-left: 1em;
+  }
+
+  /* 让每个大段落稍微留白 */
+  li.session {
+    margin-bottom: 0.8rem;
   }
 </style>
 
 <h2>Conference Program</h2>
 <h3>Program</h3>
 
-<ul>
-  <li><b>08:30 – 09:00 | Registration and Welcome Coffee</b></li>
-  <li><b>09:00 – 09:15 | Opening Remarks</b></li>
+<ul class="program">
+  <li class="session"><b>08:30 – 09:00 | Registration and Welcome Coffee</b></li>
+  <li class="session"><b>09:00 – 09:15 | Opening Remarks</b></li>
 
-  <li>
+  <li class="session">
     <b>09:15 – 10:00 | Invited Talk</b><br>
     Neurosymbolic Reasoning / Verification of Embodied AI - Tentative — Prof. Guy Van Den Broeck (UCLA)
   </li>
 
-  <li>
-    <b>10:00 – 11:00 | Technical Session 1 – Embodied AI, Reinforcement Learning, World Models & Multi-Robot Safety (4 Papers)</b>
+  <li class="session">
+    <b>10:00 – 11:00 | Technical Session 1 – Embodied AI, Reinforcement Learning, World Models &amp; Multi-Robot Safety (4 Papers)</b>
     <p>Each paper: 10-minute presentation + 5-minute Q&amp;A</p>
 
     <ol>
@@ -51,5 +66,98 @@ nav: program
         <em>Minhyuk Park, Aloysius K. Mok and Tsz-Chiu Au</em>
       </li>
     </ol>
+  </li>
+
+  <li class="session">
+    <b>11:00 – 11:30 | Coffee Break &amp; Poster Viewing</b><br>
+    <small>(All accepted papers may optionally bring posters.)</small>
+  </li>
+
+  <li class="session">
+    <b>11:30 – 12:45 | Technical Session 2 – Verification, Certification, Program Analysis &amp; LLM Safety (5 Papers)</b>
+    <p>Each paper: 10-minute presentation + 5-minute Q&amp;A</p>
+
+    <ol>
+      <li>
+        <b>Formal Safety Guarantees for Autonomous Vehicles using Barrier Certificates</b><br>
+        <em>Oumaima Barhoumi, Mohamed H Zaki and Sofiène Tahar</em>
+      </li>
+      <li>
+        <b>A New Strategy for Verifying Reach-Avoid Specifications in Neural Feedback Systems</b><br>
+        <em>Sam Akinwande, Sydney Katz, Mykel Kochenderfer and Clark Barrett</em>
+      </li>
+      <li>
+        <b>Toward Maturity-Based Certification of Embodied AI: Quantifying Trustworthiness Through Measurement Mechanisms</b><br>
+        <em>Michael Darling, Alan Hesu, Michael Mardikes, Brian McGuigan and Reed Milewicz</em>
+      </li>
+      <li>
+        <b>PATH2INV: Integrating Path-Sensitive Program Analysis with Large Language Models for Loop Invariant Inference</b><br>
+        <em>Mingxiu Wang, Jiawei Wang and Xiao Cheng</em>
+      </li>
+      <li>
+        <b>A Unified Framework for Jailbreak Attacks on Large Language Models</b><br>
+        <em>Xiaobing Sun and Liangli Zhen</em>
+      </li>
+    </ol>
+  </li>
+
+  <li class="session">
+    <b>12:45 – 14:00 | Lunch Break &amp; Poster Viewing</b><br>
+    <small>(Informal poster browsing; no dedicated session required.)</small>
+  </li>
+
+  <li class="session">
+    <b>14:00 – 15:00 | Panel Discussion</b>
+    <p><b>Moderator:</b> Xi Zheng</p>
+    <p><b>Theme:</b> <em>Certification Challenges for AI-Enabled Autonomy: What Can Neurosymbolic Methods Enable?</em></p>
+
+    <p><b>Panellists:</b></p>
+    <ul class="bullets">
+      <li>Guy Van Den Broeck (UCLA)</li>
+      <li>Dinesh Manocha (UMCP)</li>
+      <li>Basura Fernando (A-STAR, Tentative)</li>
+    </ul>
+  </li>
+
+  <li class="session"><b>15:00 – 15:15 | Coffee Break</b></li>
+
+  <li class="session">
+    <b>15:15 – 16:00 | Breakout Discussions</b><br>
+    Participants split into three focused groups:
+
+    <ol>
+      <li><b>Scenario-Based Testing and LLM-Guided Specification Mining</b> (led by Xi Zheng)</li>
+      <li><b>Compositional Verification and Modular Reasoning for Embodied AI</b> (led by Guy Van Den Broeck)</li>
+      <li><b>Robustness Under Uncertainty, Sensing Noise, and Human–Robot Interaction</b> (led by Archan Misra)</li>
+    </ol>
+
+    <p>Each group produces <b>2–3</b> actionable recommendations for the roadmap.</p>
+  </li>
+
+  <li class="session">
+    <b>16:00 – 16:30 | Breakout Report-Back Session</b><br>
+    Each group presents their key insights and open research questions.
+  </li>
+
+  <li class="session">
+    <b>16:30 – 16:50 | Roadmap Consolidation Discussion</b><br>
+    Collective shaping of a community roadmap for reliable embodied AI, covering:
+    <ul class="bullets">
+      <li>Neurosymbolic architectures</li>
+      <li>Testing and scenario generation</li>
+      <li>Specification mining</li>
+      <li>Verification and certification</li>
+      <li>Robustness and uncertainty management</li>
+    </ul>
+  </li>
+
+  <li class="session">
+    <b>16:50 – 17:00 | Closing Remarks</b>
+    <p>Plans for:</p>
+    <ul class="bullets">
+      <li>Community follow-up</li>
+      <li>Special issues / joint whitepaper</li>
+      <li>Future AAAI Bridge events and co-located workshops</li>
+    </ul>
   </li>
 </ul>
