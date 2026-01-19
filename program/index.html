@@ -30,6 +30,22 @@ nav: program
   li.session {
     margin-bottom: 0.8rem;
   }
+
+  /* 修复：移动端标题换行重叠（主题 line-height 太小/固定导致） */
+  h2, h3 {
+    line-height: 1.25;
+  }
+
+  /* 防止 iOS 自动放大字体导致 line-height 不匹配 */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* 小屏下把标题字号降一点，更稳 */
+  @media (max-width: 600px) {
+    h2 { font-size: 1.7rem; }
+    h3 { font-size: 1.2rem; }
+  }
 </style>
 
 <h2>Conference Program on January 21, 2026 - Room: Garnet 215</h2>
