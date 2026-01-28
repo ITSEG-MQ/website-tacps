@@ -1,479 +1,181 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
+<script>
+    function includeHTML() {
+        var z, i, elmnt, file, xhttp;
+        /* Loop through a collection of all HTML elements: */
+        z = document.getElementsByTagName("*");
+        for (i = 0; i < z.length; i++) {
+            elmnt = z[i];
+            /*search for elements with a certain atrribute:*/
+            file = elmnt.getAttribute("w3-include-html");
+            if (file) {
+                /* Make an HTTP request using the attribute value as the file name: */
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) { elmnt.innerHTML = this.responseText; }
+                        if (this.status == 404) { elmnt.innerHTML = "Page not found."; }
+                        /* Remove the attribute, and call this function once more: */
+                        elmnt.removeAttribute("w3-include-html");
+                        includeHTML();
+                    }
+                }
+                xhttp.open("GET", file, true);
+                xhttp.send();
+                /* Exit the function: */
+                return;
+            }
+        }
+    }
+</script>
+
 <head>
-  <title>Shonan Meeting #235</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-  <meta http-equiv="Content-Type"
- content="text/html; charset=iso-8859-1">
-  <link href="./css/style.css" rel="stylesheet" type="text/css">
-<style>
-    table {
-        width: 100%;
-        border-spacing: 5px;
-    }
-    th {
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-    td {
-        border-bottom: 1px solid #ddd;
-    }
-    ol {
-        counter-reset: r-counter 0;
-        list-style-type: none;
-        margin-left: 0px;
-    }
-    ol li:before {
-        content: "[" counter(r-counter) "] ";
-        counter-increment: r-counter;
-    }
-    div.container {
-        display:inline-block;
-        margin-right:5em;
-    }
-</style>
+    <title>Shonan Meeting #235</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <style>
+        table {
+            width: 100%;
+            border-spacing: 5px;
+        }
+
+        th {
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        ol {
+            counter-reset: r-counter 0;
+            list-style-type: none;
+            margin-left: 0px;
+        }
+
+        ol li:before {
+            content: "[" counter(r-counter) "] ";
+            counter-increment: r-counter;
+        }
+
+        div.container {
+            display: inline-block;
+            margin-right: 5em;
+        }
+    </style>
 </head>
+
 <body>
-<div class="main">
-<div class="page">
-<div class="header">
-<div class="header-img">
-<h1>Optimisation Methods in<br> Geometric Vision</h1>
-<h2>27-31 January 2019, Shonan Village Centre<h2>
-</div>
-<div class="menu">
-<ul>
-  <li><a href="#organisers">Organisers</a></li>
-  <li><a href="#sponsors">Sponsors</a></li>
-  <li><a href="#what">What is a Shonan Meeting?</a></li>
-  <li><a href="#abstract">Meeting Abstract</a></li>
-  <li><a href="#keynotes">Keynote Speakers</a></li>
-  <li><a href="#participants">Participants</a></li>
-  <li><a href="#program">Program</a></li>
-</ul>
-
-</div>
-</div>
-<div class="content">
-<div class="left-panel">
-<!-- 
-<p>&nbsp;</p>
-
-<h2 class="title">Group photo - Thank you for the wonderful time! See you again in the future!</h2>
-
-<p>&nbsp;</p>
-
-<p>
-<ul>
-<li>Thanks to <a href="https://www.laurentkneip.com/">Laurent Kneip</a> and <a href="http://www.iim.cs.tut.ac.jp/~kanatani/">Kenichi Kanatani</a> for these wonderful shots.</li>
-<li>Click on photos for larger version.</li>
-<li>Not all meeting participants are in the photos.</li>
-</ul>
-<table style="width:90%">
-<tr>
-<td style="border-bottom:0px">
-    <a href="images/image1.jpeg">
-    <img src="images/image1.jpeg" width="100%">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="images/image4.jpeg">
-    <img src="images/image4.jpeg" width="100%">
-    </a>
-</td>
-</tr>
-<tr>
-<td style="border-bottom:0px">
-    <a href="images/CIMG0399.JPG">
-    <img src="images/CIMG0399.JPG" width="100%">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="images/CIMG0417.jpg">
-    <img src="images/CIMG0417.jpg" width="100%">
-    </a>
-</td>
-</tr>
-</table>
-</p>
-
-<p>&nbsp;</p>
-
-<h2 class="title">Presentation slides, summary of meeting outcomes.</h2>
-
-<p>&nbsp;</p>
-
-<p>
-<ul>
-<li>Kindly upload your presentation slides to this <a href="https://drive.google.com/drive/folders/1aha2qhwv-yABytarYP1tGZuC20DGosas?usp=sharing">Google Drive Folder</a>.</li>
-<li>Kindly contribute to the <a href="https://docs.google.com/document/d/1zORKEKTc0n6ZnBZwf9WggGIP2rXrY6ouffBgaqLAnB8/edit?usp=sharing">summary of meeting outcomes</a>.</li>
-</ul>
-</p>
-
-<p>&nbsp;</p> -->
-
-<a name="organisers"></a>
-
-<h2 class="title">A warm welcome from the organisers!</h2>
-
-<table style="width:50%">
-<tr>
-<td style="border-bottom:0px">
-    <a href="https://cs.adelaide.edu.au/~tjchin/">
-    <img src="images/tj.jpg" height="150px">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="http://aeriksson.net">
-    <img src="images/anders.png" height="150px">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="http://www-infobiz.ist.osaka-u.ac.jp/en/member/matsushita/">
-    <img src="images/yasu.jpg" height="150px">
-    </a>
-</td>
-</tr>
-<tr>
-<td style="border-bottom:0px">
-    <a href="https://cs.adelaide.edu.au/~tjchin/">Tat-Jun Chin</a>
-</td>
-<td style="border-bottom:0px">
-    <a href="http://aeriksson.net">Anders Eriksson</a>
-</td>
-<td style="border-bottom:0px">
-    <a href="http://www-infobiz.ist.osaka-u.ac.jp/en/member/matsushita/">Yasuyuki Matsushita</a>
-</td>
-</tr>
-</table>
+    <div class="main">
+        <div class="page">
+            <div class="header">
+                <div class="header-img">
+                    <h1>LLM-Guided Synthesis, <br>Testing, and Verification of <br>Learning-Enabled <br>Cyber-Physical
+                        Systems</h1>
+                    <h2>9-12 March 2026, Shonan Village Centre<h2>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li><a href="#organizers">Organizers</a></li>
+                        <li><a href="#sponsors">Sponsors</a></li>
+                        <li><a href="#what">What is Shonan Meeting?</a></li>
+                        <li><a href="#abstract">Meeting Abstract</a></li>
+                        <li><a href="#keynotes">Keynote Speakers</a></li>
+                        <li><a href="#participants">Participants</a></li>
+                        <li><a href="#program">Program</a></li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="content">
+                <div class="left-panel">
+
+                    <!-- <p>&nbsp;</p>
+                    <div w3-include-html="./html/group.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/slides.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/summary.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p> -->
+
+
+                    <a name="organizers"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/organizers.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <a name="sponsors"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/sponsors.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <a name="what"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/what.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <a name="abstract"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/abstract.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <a name="keynotes"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/keynotes.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <a name="participants"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/participants.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+                    <a name="program"></a>
+                    <p>&nbsp;</p>
+                    <div w3-include-html="./html/program.html"></div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+                </div>
+
+            </div>
+
+            <div class="footer">
+                <p>Copyright &copy; 2026 Shonan Seminar</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        includeHTML();
+    </script>
 
-<p>&nbsp;</p>
 
-<a name="sponsors"></a>
-
-<h2 class="title">We thank our generous sponsors</h2>
-
-<p>&nbsp;</p>
-
-<table style="width:75%">
-<tr>
-<td style="border-bottom:0px">
-    <a href="https://www.nii.ac.jp/en/">
-    <img src="images/nii.png" height="50px">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="https://www.roboticvision.org">
-    <img src="images/acrv.png" height="80px">
-    </a>
-</td>
-</tr>
-</table>
-
-<p>&nbsp;</p>
-
-<a name="what"></a>
-
-<h2 class="title">What is a Shonan Meeting?</h2>
-
-<p>&nbsp;</p>
-
-<p>
-Excerpt from <a href="http://shonan.nii.ac.jp/shonan/proposal-submissions/objective/">NII</a>: 
-</p>
-
-<p>&nbsp;</p>
-
-<p>
-NII Shonan Meetings, following the well-known Dagstuhl Seminars, aim to internationally promote informatics its research, by providing another world's premier venue for world-class scientists, promising young researchers, and practitioners to come together in Asia to exchange their knowledge, discuss their research findings, and explore a cutting-edge informatics topics.
-</p>
-
-<p>&nbsp;</p>
-
-<p>
-The meetings are held in Shonan Village Center near Tokyo, which offers facilities for conferences, trainings, and lodging in a resort-like setting. The friendly and open atmosphere is to promote communications among participants. The NII Shonan Meetings are managed by National Institute of Informatics (NII), Japan.
-</p>
-
-<p>&nbsp;</p>
-
-<a name="abstract"></a>
-
-<h2 class="title">Meeting Abstract</h2>
-
-<p>&nbsp;</p>
-
-<p>
-Computer vision is concerned with inferring properties of the world from observations in the form of visual images. Such inverse problems typically take shape as optimization problems, that aim to find the best explanation, for the complex visual phenomenon that gave rise to a set of noisy and incomplete visual measurements. For computer vision applications to be successful, the underlying optimization problems must be supported by efficient and dependable solution methods.
-</p>
-
-<p>&nbsp;</p>
-
-<p>
-The proposed meeting focuses on a broad subclass of computer vision problems called geometric vision problems. Roughly, these are problems that exploit fundamental geometrical constraints arising from the image formation process or physical properties of the scene (e.g., lighting conditions, characteristics of motions), to extract information of the scene (e.g., depth, 3D shape, camera trajectory, object identities) from the given visual data. Example geometric vision problems include structure-from-motion (SfM), simultaneous localization and mapping (SLAM), pose averaging, photometric stereo, and motion segmentation. Methods for solving geometric vision problems underpin many useful applications, such as 3D reconstruction, robot navigation, object recognition/tracking, and computational photography.
-</p>
-
-<p>&nbsp;</p>
-
-<p>
-Geometric vision is replete with hard optimization problems. By "hard", we mean that the time needed to solve the optimization problems grows quickly with the size of the input data. Take, for example, the task of robustly estimating the planar perspective transformation (a.k.a. homography) from outlier-contaminated point correspondences between two images. Due to the inherent intractability of robust homography estimation, practitioners often rely on simple randomized heuristics to find rough approximate solutions, which neither guarantee optimality nor provide bounds on the approximation error.
-</p>
-
-<p>&nbsp;</p>
-
-<p>
-The computational difficulty of geometric vision problems is also often compounded by the extremely large size of the input. Take, for example, the task of bundle adjustment, i.e., calculate 3D points and camera poses that are consistent with a set of images of a scene. In the age of big data, the input image set is often obtained by "scraping" Internet photo collections, or by conducting long-term surveillance of a scene using a robot. Such input sizes easily overwhelm traditional computing architectures, and distributed or parallel versions of bundle adjustment must be used.
-</p>
-
-<p>&nbsp;</p>
-
-<h3>Technical Themes</h3>
-
-<p>&nbsp;</p>
-
-<p>
-The overall theme for the proposed meeting is recent theoretical and algorithmic advances on optimization problems in geometric vision. These include, but are not restricted to:
-<ul>
-<li>Solvability and approximability of geometric vision problems.</li>
-<li>Duality in geometric vision problems.</li>
-<li>Global optimization algorithms for geometric vision.</li>
-<li>Approximate algorithms including randomized methods.</li>
-<li>Distributed and incremental algorithms for geometric vision problems.</li>
-<li>Machine learning and deep learning in geometric vision problems.</li>
-</ul>
-Following the spirit of Shonan Meetings, we will consider other related topics, based on the interest of the attendees and the trajectory of the discussions.
-</p>
-
-<p>&nbsp;</p>
-
-<p>
-It is hoped that the meeting will contribute towards promoting the value of basic algorithmic research in computer vision, especially in the area of geometric optimization.
-From a more practical standpoint, and as alluded to above, geometric vision problems underpin some of the most important capabilities (e.g., 3D sensing and navigation, object recognition and tracking) that support intelligent machines. Therefore, the outcomes of the proposed meeting could have significant impact on some of the most important technological developments, such as self-driving cars, intelligent domestic robots, and smart manufacturing - developments that are already driving the economic growth in developed and developing countries alike.
-</p>
-
-<p>&nbsp;</p>
-
-<a name="keynotes"></a>
-
-<h2 class="title">Keynote Speakers</h2>
-
-<table style="width:50%">
-<tr>
-<td style="border-bottom:0px">
-    <a href="http://www.maths.lth.se/matematiklth/personal/fredrik/">
-    <img src="images/fredrik.jpg" height="150px">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="http://frank.dellaert.com/">
-    <img src="images/frank.jpg" height="150px">
-    </a>
-</td>
-<td style="border-bottom:0px">
-    <a href="https://cecs.anu.edu.au/people/richard-hartley">
-    <img src="images/richard.jpg" height="150px">
-    </a>
-</td>
-</tr>
-<tr>
-<td style="border-bottom:0px">
-    <a href="http://www.maths.lth.se/matematiklth/personal/fredrik/">Fredrik Kahl</a>
-</td>
-<td style="border-bottom:0px">
-    <a href="http://frank.dellaert.com/">Frank Dellaert</a>
-</td>
-<td style="border-bottom:0px">
-    <a href="https://cecs.anu.edu.au/people/richard-hartley">Richard Hartley</a>
-</td>
-</tr>
-</table>
-
-<p>&nbsp;</p>
-
-<a name="participants"></a>
-
-<h2 class="title">Participants</h2>
-
-<p>
-<table>
-<col style="width:20%">
-<col style="width:80%">
-<!---<tr><th>Name</th><th>Institution</th></tr>--->
-<tr><td></td><td></td></tr>
-<tr><td>Alessio Del Bue</td><td>Italian Institute of Technology</td></tr>
-<tr><td>Alexander Bronstein</td><td>Technion, Israel Institute of Technology</td></tr>
-<tr><td>Ali Bab-Hadiashar</td><td>RMIT University</td></tr>
-<tr><td>Anders Eriksson</td><td>Queensland University of Technology</td></tr>
-<tr><td>Carl Olsson</td><td>Chalmers Institute of Technology</td></tr>
-<tr><td>Christopher Zach</td><td>Chalmers University of Technology</td></tr>
-<tr><td>Danda Pani Paudel</td><td>ETH Zurich</td></tr>
-<tr><td>Daniel Lin Wen Yan</td><td>Osaka University</td></tr>
-<tr><td>David Suter</td><td>Edith Cowan University</td></tr>
-<tr><td>Florian Bernard</td><td>Max-Planck-Institute for Informatics</td></tr>
-<tr><td>Frank Dellaert</td><td>Georgia Tech</td></tr>
-<tr><td>Fredrik Kahl</td><td>Chalmers University of Technology</td></tr>
-<tr><td>Gim Hee Lee</td><td>National University of Singapore</td></tr>
-<tr><td>Hongdong Li</td><td>Australian National University</td></tr>
-<tr><td>Jamie Sherrah</td><td>Digital Animal Interactive Inc. (FTSY)</td></tr>
-<tr><td>Jesus Briales</td><td>Facebook</td></tr>
-<tr><td>Kenichi Kanatani</td><td>Okayama University</td></tr>
-<tr><td>Laurent Kneip</td><td>Shanghai Tech</td></tr>
-<tr><td>Luca Carlone</td><td>MIT</td></tr>
-<tr><td>Michael Brown</td><td>York University</td></tr>
-<tr><td>Michael Waechter</td><td>Osaka University</td></tr>
-<tr><td>Michael Bronstein</td><td>University of Italian Switzerland, Intel, Imperial</td></tr>
-<tr><td>Ping Tan</td><td>Simon Fraser University</td></tr>
-<tr><td>Richard  Hartley</td><td>Australian National University</td></tr>
-<tr><td>Robert Mahony</td><td>Australian National University</td></tr>
-<tr><td>Simon Lucey</td><td>Carnegie Mellon University</td></tr>
-<tr><td>Sudipta Sinha</td><td>Microsoft Research</td></tr>
-<tr><td>Tarek Hamel</td><td>Universite Cote d'Azur</td></tr>
-<tr><td>Tat-Jun Chin</td><td>The University of Adelaide</td></tr>
-<tr><td>Viorela Ila</td><td>University of Sydney</td></tr>
-<tr><td>Yasuyuki Matsushita</td><td>Osaka university</td></tr>
-<tr><td>Yinqiang Zheng</td><td>NII</td></tr>
-<tr><td>Yongduek Seo</td><td>Sogang University</td></tr>
-</table>
-</p>
-
-
-<p>&nbsp;</p>
-
-<a name="program"></a>
-
-<h2 class="title">Program</h2>
-
-<p>&nbsp;</p>
-
-<p><b>Contact the <a href="#organisers">organisers</a> if there are any issues with the program.</b></p>
-
-<p>&nbsp;</p>
-
-<h3>Sunday 27 January</h3>
-
-<p>
-<table>
-<col style="width:20%">
-<col style="width:80%">
-<tr><td>1500 onwards</td><td><font color="7b68ee">Check-in</font></td></tr>
-<tr><td>1900-2100</td><td><font color="7b68ee">Welcome banquet</font></td></tr>
-</table>
-</p>
-
-<p>&nbsp;</p>
-
-<h3>Monday 28 January</h3>
-
-<p>
-<table>
-<col style="width:20%">
-<col style="width:80%">
-<tr><td>0730-0900</td><td><font color="7b68ee">Breakfast</font></td></tr>
-<tr><td>0900-0915</td><td><font color="2e8b57">Welcoming address - Tat-Jun Chin, Anders Eriksson, Yasuyuki Matsushita</font></td></tr>
-<tr><td>0915-1000</td><td>Keynote 1 - Fredrik Kahl</td></tr>
-<tr><td>1000-1015</td><td>Michael Brown</td></tr>
-<tr><td>1015-1030</td><td>Christopher Zach</td></tr>
-<tr><td>1030-1100</td><td><font color="7b68ee">Coffee break</font></td></tr>
-<tr><td>1100-1115</td><td>Robert Mahony</td></tr>
-<tr><td>1115-1130</td><td>Yongduek Seo</td></tr>
-<tr><td>1130-1200</td><td><font color="2e8b57">Breakout session 1</font></td></tr>
-<tr><td>1200-1330</td><td><font color="7b68ee">Lunch</font></td></tr>
-<tr><td>1330-1345</td><td>Sudipta Sinha</td></tr>
-<tr><td>1345-1400</td><td>Yinqiang Zheng</td></tr>
-<tr><td>1400-1415</td><td>Michael Waechter</td></tr>
-<tr><td>1415-1430</td><td>Viorela Ila</td></tr>
-<tr><td>1430-1500</td><td><font color="2e8b57">Breakout session 2</font></td></tr>
-<tr><td>1500-1530</td><td><font color="7b68ee">Coffee break</font></td></tr>
-<tr><td>1530-1545</td><td>Hongdong Li</td></tr>
-<tr><td>1545-1600</td><td>David Suter</td></tr>
-<tr><td>1600-1630</td><td><font color="2e8b57">Breakout session 3</font></td></tr>
-<tr><td>1630-1800</td><td><font color="7b68ee">Free time</font></td></tr>
-<tr><td>1800-1930</td><td><font color="7b68ee">Dinner</font></td></tr>
-</table>
-</p>
-
-<p>&nbsp;</p>
-
-<h3>Tuesday 29 January</h3>
-
-<p>
-<table>
-<col style="width:20%">
-<col style="width:80%">
-<tr><td>0730-0900</td><td><font color="7b68ee">Breakfast</font></td></tr>
-<tr><td>0900-0915</td><td><font color="2e8b57">Program briefing</font></td></tr>
-<tr><td>0915-1000</td><td>Keynote 2 - Frank Dellaert</td></tr>
-<tr><td>1000-1015</td><td>Ping Tan</td></tr>
-<tr><td>1015-1030</td><td>Jamie Sherrah</td></tr>
-<tr><td>1030-1100</td><td><font color="7b68ee">Cofee break</font></td></tr>
-<tr><td>1100-1115</td><td>Ali Bab-Hadiashar</td></tr>
-<tr><td>1115-1130</td><td>Gim Hee Lee</td></tr>
-<tr><td>1130-1200</td><td><font color="2e8b57">Breakout session 4</font></td></tr>
-<tr><td>1200-1315</td><td><font color="7b68ee">Lunch</font></td></tr>
-<tr><td>1315-1330</td><td><font color="FF0000">Group photo</font></td></tr>
-<tr><td>1330-1345</td><td>Kenichi Kanatani</td></tr>
-<tr><td>1345-1400</td><td>Jesus Briales</td></tr>
-<tr><td>1400-1415</td><td>Carl Olsson</td></tr>
-<tr><td>1415-1445</td><td><font color="2e8b57">Breakout session 5</font></td></tr>
-<tr><td>1445-1515</td><td><font color="7b68ee">Coffee break</font></td></tr>
-<tr><td>1515-1530</td><td>Florian Bernard</td></tr>
-<tr><td>1530-1545</td><td>Alessio Del Bue</td></tr>
-<tr><td>1545-1600</td><td>Danda Pani Paudel</td></tr>
-<tr><td>1600-1630</td><td><font color="2e8b57">Breakout session 6</font></td></tr>
-<tr><td>1630-1800</td><td><font color="7b68ee">Free time</font></td></tr>
-<tr><td>1800-1930</td><td><font color="7b68ee">Dinner</font></td></tr>
-</table>
-</p>
-
-<p>&nbsp;</p>
-
-<h3>Wednesday 30 January</h3>
-
-<p>
-<table>
-<col style="width:20%">
-<col style="width:80%">
-<tr><td>0730-0900</td><td><font color="7b68ee">Breakfast</font></td></tr>
-<tr><td>0900-0915</td><td><font color="2e8b57">Program briefing</font></td></tr>
-<tr><td>0915-1000</td><td>Keynote 3 - Richard Hartley</td></tr>
-<tr><td>1000-1015</td><td>Tarek Hamel</td></tr>
-<tr><td>1015-1030</td><td>Laurent Kneip</td></tr>
-<tr><td>1030-1100</td><td><font color="7b68ee">Coffee break</font></td></tr>
-<tr><td>1100-1115</td><td>Simon Lucey</td></tr>
-<tr><td>1115-1130</td><td>Luca Carlone</td></tr>
-<tr><td>1130-1200</td><td><font color="2e8b57">Breakout session 7</font></td></tr>
-<tr><td>1200-1330</td><td><font color="7b68ee">Lunch</font></td></tr>
-<tr><td>1300-2045</td><td><font color="7b68ee">Excursion and dinner</font></td></tr>
-</table>
-</p>
-
-<p>&nbsp;</p>
-
-<h3>Thursday 31 January</h3>
-
-<p>
-<table>
-<col style="width:20%">
-<col style="width:80%">
-<tr><td>0730-0930</td><td><font color="7b68ee">Breakfast and check-out</font></td></tr>
-<tr><td>0930-0945</td><td>Yasuyuki Matsushita</td></tr>
-<tr><td>0945-1000</td><td>Anders Eriksson</td></tr>
-<tr><td>1000-1015</td><td>Tat-Jun Chin</td></tr>
-<tr><td>1015-1100</td><td><font color="7b68ee">Coffee break</font></td></tr>
-<tr><td>1100-1130</td><td><font color="2e8b57">Breakout session 8</font></td></tr>
-<tr><td>1130-1200</td><td><font color="2e8b57">Conclusion and wrap-up</font></td></tr>
-<tr><td>1200-1330</td><td><font color="7b68ee">Lunch and end of meeting</font></td></tr>
-</table>
-</p>
-
-</div>
-
-</div>
-
-<div class="footer">
-<p>Copyright &copy; 2026 Shonan Seminar</p>
-</div>
-</div>
-</div>
 </body>
+
 </html>
