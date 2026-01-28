@@ -241,27 +241,49 @@ div.container {
 
 /* Adds space BETWEEN columns/cells */
 .sponsors-table {
-  width: 75%;
-  border-collapse: separate;      /* important: enables border-spacing */
-  border-spacing: 8px 8px;      /* horizontal, vertical gap */
+	width: 75%;
+	border-collapse: separate;
+	/* important: enables border-spacing */
+	border-spacing: 8px 8px;
+	/* horizontal, vertical gap */
 }
 
 /* Adds space INSIDE each cell */
 .sponsors-table td {
-  padding: 8px 8px;              /* vertical, horizontal padding */
-  vertical-align: middle;         /* optional: makes logos align nicely */
+	padding: 8px 8px;
+	/* vertical, horizontal padding */
+	vertical-align: middle;
+	/* optional: makes logos align nicely */
+	text-align: center;
+	/* centers inline text + <a> */
 }
 
+/* give ONLY the ITSEG png a visible background */
+.itseg-logo {
+	background-color: #1f2937;
+	/* pick any color */
+	padding: 10px 14px;
+	/* creates space around the logo */
+	border-radius: 8px;
+	/* optional */
+}
 
 /* Adds space BETWEEN columns/cells */
 .avatar-table {
-  width: 50%;
-  border-collapse: separate;      /* important: enables border-spacing */
-  border-spacing: 10px 10px;      /* horizontal, vertical gap */
+	width: 75%;
+	border-collapse: separate;
+	/* important: enables border-spacing */
+	border-spacing: 10px 10px;
+	/* horizontal, vertical gap */
 }
+
 
 /* Adds space INSIDE each cell */
 .avatar-table td {
-  padding: 10px 10px;              /* vertical, horizontal padding */
-  vertical-align: middle;         /* optional: makes logos align nicely */
+	padding: 5px 20px;
+	/* vertical, horizontal padding */
+	vertical-align: middle;
+	/* optional: makes logos align nicely */
+	text-align: center;
+	/* centers inline text + <a> */
 }
