@@ -150,7 +150,7 @@ def source_errors(root: Path) -> list[str]:
         errors.append("_config_prod.yml must set environment: production")
     if not production.get("url", "").startswith("https://"):
         errors.append("_config_prod.yml must use an https URL")
-    if production.get("baseurl") not in {"", None}:
+    if "baseurl" not in production or production.get("baseurl") != "":
         errors.append("_config_prod.yml must use an empty baseurl")
 
     for config_path in (staging_path, production_path):
@@ -165,6 +165,8 @@ def source_errors(root: Path) -> list[str]:
     errors.extend(workflow_action_errors(validate_workflow))
     if "concurrency:" not in release_text or "group: production-release" not in release_text:
         errors.append("release-zip.yml must serialize production releases")
+    if 'branches: ["main"]' not in release_text or "contents: write" not in release_text:
+        errors.append("release-zip.yml must run from main with release write permission")
     if "overwrite_files: true" not in release_text:
         errors.append("release-zip.yml must explicitly overwrite the rolling site.zip asset")
     if "replace_assets:" in release_text:
@@ -173,6 +175,9 @@ def source_errors(root: Path) -> list[str]:
         errors.append("release-zip.yml must validate generated output before packaging")
     if "contents: read" not in validate_text or "contents: write" in validate_text:
         errors.append("validate.yml must use read-only repository permissions")
+    for trigger in ('"feature/**"', '"feat/**"', "pull_request:", "workflow_dispatch:"):
+        if trigger not in validate_text:
+            errors.append(f"validate.yml is missing required trigger: {trigger}")
     if "actions/upload-artifact@" not in validate_text:
         errors.append("validate.yml must upload a preview artifact")
     if "scripts/validate_site.py --site _site" not in validate_text:
