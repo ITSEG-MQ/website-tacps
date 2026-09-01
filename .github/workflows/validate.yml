@@ -1,21 +1,24 @@
-name: Package to zip
+name: Validate site
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "feature/**"
+      - "feat/**"
+  pull_request:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: production-release
-  cancel-in-progress: false
+  group: validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,7 +39,7 @@ jobs:
           cp _config_prod.yml _config.yml
           echo "Using _config_prod.yml as _config.yml for this build"
 
-      - name: Build with Jekyll (Pages deps)
+      - name: Build production preview
         uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
         with:
           source: ./
@@ -44,23 +47,13 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      - name: Validate generated site before packaging
+      - name: Validate generated site
         run: python scripts/validate_site.py --site _site --config _config_prod.yml
 
-      - name: Zip site
-        run: |
-          cd _site
-          zip -rq ../site.zip .
-          cd ..
-
-      - name: Create or update rolling production release
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+      - name: Upload validated preview
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          tag_name: prod
-          name: Production Build
-          draft: false
-          prerelease: false
-          make_latest: true
-          overwrite_files: true
-          fail_on_unmatched_files: true
-          files: site.zip
+          name: site-preview
+          path: _site
+          retention-days: 7
+          if-no-files-found: error

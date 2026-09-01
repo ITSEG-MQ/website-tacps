@@ -4,5 +4,10 @@ url: "https://tacps.org"
 baseurl: "" 
 environment: "production"
 exclude:
+  - LICENSE
+  - README.md
   - editor-handbook.md
   - maintainer-handbook.md
+  - scripts
+  - shonan235/index.html.bak
+  - tests

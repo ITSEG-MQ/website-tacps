@@ -72,10 +72,10 @@ then visit [127.0.0.1:4000](http://127.0.0.1:4000) to check the <span style="col
 As the local one is updating in real-time, you can edit,save and refresh the webpage to check the result.
 
 ## Website Deployment
-Currently we are deploying a 2-stage website deployment:
-1. [itseg-mq.github.io/tacps](https://itseg-mq.github.io/tacps)  for staging, hosted by GitHub Pages
-2. [tacps.org](https://tacps.org) for production, self-hosted
+The repository uses a two-stage deployment:
+1. [itseg-mq.github.io/website-tacps](https://itseg-mq.github.io/website-tacps/) for staging, hosted by GitHub Pages.
+2. [tacps.org](https://tacps.org/) for production, self-hosted.
 
-The GitHub Pages can provide a quick look on the result.
+Feature branches and pull requests are built by `.github/workflows/validate.yml`; the workflow uploads a seven-day preview artifact after validation succeeds.
 
-The self-hosted one has Cloudflare caching for faster access around the world, it will check on github page update every 1 min and deploy update automatically if any. 
+Pushes to `main` are validated, packaged as the rolling `prod` GitHub release, and automatically deployed by the production server within approximately one minute. The production site uses Cloudflare caching.
