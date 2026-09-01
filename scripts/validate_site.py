@@ -40,15 +40,23 @@ class ReferenceParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.references: list[tuple[str, int]] = []
+        self.includes: list[tuple[str, int]] = []
+        self.noindex = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        del tag
         line, _ = self.getpos()
+        normalized = {key.lower(): value or "" for key, value in attrs}
+        if tag.lower() == "meta" and normalized.get("name", "").lower() == "robots":
+            self.noindex = "noindex" in normalized.get("content", "").lower()
         for key, value in attrs:
             if not value:
                 continue
             if key in {"href", "src", "poster", "data-src"}:
                 self.references.append((value.strip(), line))
+            elif key == "w3-include-html":
+                include = value.strip()
+                self.includes.append((include, line))
+                self.references.append((include, line))
             elif key == "srcset":
                 for candidate in value.split(","):
                     url = candidate.strip().split(" ", 1)[0]
@@ -161,26 +169,32 @@ def source_errors(root: Path) -> list[str]:
 
     release_text = release_workflow.read_text(encoding="utf-8")
     validate_text = validate_workflow.read_text(encoding="utf-8")
+    release_policy = "\n".join(
+        line for line in release_text.splitlines() if not line.lstrip().startswith("#")
+    )
+    validate_policy = "\n".join(
+        line for line in validate_text.splitlines() if not line.lstrip().startswith("#")
+    )
     errors.extend(workflow_action_errors(release_workflow))
     errors.extend(workflow_action_errors(validate_workflow))
-    if "concurrency:" not in release_text or "group: production-release" not in release_text:
+    if "concurrency:" not in release_policy or "group: production-release" not in release_policy:
         errors.append("release-zip.yml must serialize production releases")
-    if 'branches: ["main"]' not in release_text or "contents: write" not in release_text:
+    if 'branches: ["main"]' not in release_policy or "contents: write" not in release_policy:
         errors.append("release-zip.yml must run from main with release write permission")
-    if "overwrite_files: true" not in release_text:
+    if "overwrite_files: true" not in release_policy:
         errors.append("release-zip.yml must explicitly overwrite the rolling site.zip asset")
-    if "replace_assets:" in release_text:
+    if "replace_assets:" in release_policy:
         errors.append("release-zip.yml contains the unsupported replace_assets input")
-    if "scripts/validate_site.py --site _site" not in release_text:
+    if "scripts/validate_site.py --site _site" not in release_policy:
         errors.append("release-zip.yml must validate generated output before packaging")
-    if "contents: read" not in validate_text or "contents: write" in validate_text:
+    if "contents: read" not in validate_policy or "contents: write" in validate_policy:
         errors.append("validate.yml must use read-only repository permissions")
     for trigger in ('"feature/**"', '"feat/**"', "pull_request:", "workflow_dispatch:"):
-        if trigger not in validate_text:
+        if trigger not in validate_policy:
             errors.append(f"validate.yml is missing required trigger: {trigger}")
-    if "actions/upload-artifact@" not in validate_text:
+    if "actions/upload-artifact@" not in validate_policy:
         errors.append("validate.yml must upload a preview artifact")
-    if "scripts/validate_site.py --site _site" not in validate_text:
+    if "scripts/validate_site.py --site _site" not in validate_policy:
         errors.append("validate.yml must validate generated output")
     return errors
 
@@ -216,6 +230,8 @@ def resolve_reference(site: Path, source: Path, path: str) -> Path | None:
 
 def generated_errors(site: Path, config_path: Path) -> list[str]:
     errors: list[str] = []
+    site = site.resolve()
+    config_path = config_path.resolve()
     if not site.is_dir():
         return [f"generated site directory is missing: {site}"]
     config = load_config(config_path)
@@ -235,24 +251,45 @@ def generated_errors(site: Path, config_path: Path) -> list[str]:
         if path.is_file() and path.suffix.lower() in FORBIDDEN_SUFFIXES:
             errors.append(f"backup or patch artifact was published: {path.relative_to(site)}")
 
+    parsed_pages: dict[Path, tuple[str, ReferenceParser]] = {}
     for html_path in sorted(site.rglob("*.html")):
         text = html_path.read_text(encoding="utf-8", errors="replace")
+        parser = ReferenceParser()
+        parser.feed(text)
+        parsed_pages[html_path] = (text, parser)
+
+    include_contexts: dict[Path, set[Path]] = {}
+    for parent, (_, parser) in parsed_pages.items():
+        for reference, _ in parser.includes:
+            external, reference_path = is_external(reference, expected_host)
+            if external:
+                continue
+            target = resolve_reference(site, parent, reference_path)
+            if target is not None and target.exists():
+                include_contexts.setdefault(target, set()).add(parent)
+
+    for html_path, (text, parser) in parsed_pages.items():
         relative = html_path.relative_to(site)
         if "itseg-mq.github.io" in text:
             errors.append(f"{relative}: production HTML contains the staging host")
-        if re.search(r'<meta[^>]+name=["\']robots["\'][^>]+noindex', text, re.IGNORECASE):
+        if parser.noindex:
             errors.append(f"{relative}: production HTML unexpectedly contains noindex")
-        parser = ReferenceParser()
-        parser.feed(text)
+        contexts = include_contexts.get(html_path, {html_path})
         for reference, line in parser.references:
             if not reference or reference.startswith(("#", "mailto:", "tel:", "javascript:", "data:")):
                 continue
             external, reference_path = is_external(reference, expected_host)
             if external:
                 continue
-            target = resolve_reference(site, html_path, reference_path)
-            if target is not None and not target.exists():
-                errors.append(f"{relative}:{line}: missing internal reference {reference!r}")
+            for context in contexts:
+                target = resolve_reference(site, context, reference_path)
+                if target is not None and not target.exists():
+                    context_note = ""
+                    if context != html_path:
+                        context_note = f" when included from {context.relative_to(site)}"
+                    errors.append(
+                        f"{relative}:{line}: missing internal reference {reference!r}{context_note}"
+                    )
 
     for css_path in sorted(site.rglob("*.css")):
         text = css_path.read_text(encoding="utf-8", errors="replace")

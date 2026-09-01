@@ -40,7 +40,7 @@ jobs:
           echo "Using _config_prod.yml as _config.yml for this build"
 
       - name: Build production preview
-        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
+        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
         with:
           source: ./
           destination: ./_site

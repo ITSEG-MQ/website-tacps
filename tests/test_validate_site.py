@@ -85,6 +85,29 @@ class GeneratedSiteValidationTests(unittest.TestCase):
             self.assertTrue(any("staging host" in error for error in errors), errors)
             self.assertTrue(any("noindex" in error for error in errors), errors)
 
+    def test_noindex_detection_is_attribute_order_independent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            site, config = self.valid_fixture(Path(temporary))
+            self.write(site, "index.html", '<meta content="nofollow,noindex" name="robots">')
+            errors = validator.generated_errors(site, config)
+            self.assertTrue(any("noindex" in error for error in errors), errors)
+
+    def test_dynamic_include_references_use_parent_document_base(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            site, config = self.valid_fixture(Path(temporary))
+            self.write(
+                site,
+                "section/index.html",
+                '<div w3-include-html="./html/card.html"></div>',
+            )
+            self.write(site, "section/html/card.html", '<img src="images/photo.png">')
+            self.write(site, "section/images/photo.png", "not-a-real-image")
+            self.assertEqual([], validator.generated_errors(site, config))
+
+            self.write(site, "section/html/card.html", '<img src="../images/photo.png">')
+            errors = validator.generated_errors(site, config)
+            self.assertTrue(any("when included from section/index.html" in error for error in errors), errors)
+
     def test_source_config_parser_reads_scalars_and_lists(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             config = self.write(
