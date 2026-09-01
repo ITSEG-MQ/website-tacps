@@ -133,6 +133,56 @@ def workflow_action_errors(path: Path) -> list[str]:
     return errors
 
 
+def workflow_policy(text: str) -> str:
+    """Remove YAML comments while preserving hash characters inside quotes."""
+
+    result: list[str] = []
+    for line in text.splitlines():
+        output: list[str] = []
+        quote = ""
+        escaped = False
+        for character in line:
+            if escaped:
+                output.append(character)
+                escaped = False
+                continue
+            if quote == '"' and character == "\\":
+                output.append(character)
+                escaped = True
+                continue
+            if quote:
+                output.append(character)
+                if character == quote:
+                    quote = ""
+                continue
+            if character in {"'", '"'}:
+                quote = character
+                output.append(character)
+            elif character == "#":
+                break
+            else:
+                output.append(character)
+        cleaned = "".join(output).rstrip()
+        if cleaned:
+            result.append(cleaned)
+    return "\n".join(result)
+
+
+def top_level_block(policy: str, key: str) -> str:
+    """Return one top-level YAML mapping block from comment-free workflow text."""
+
+    lines = policy.splitlines()
+    for index, line in enumerate(lines):
+        if line == f"{key}:":
+            block = [line]
+            for following in lines[index + 1 :]:
+                if following and not following[0].isspace():
+                    break
+                block.append(following)
+            return "\n".join(block)
+    return ""
+
+
 def source_errors(root: Path) -> list[str]:
     errors: list[str] = []
     staging_path = root / "_config.yml"
@@ -169,28 +219,32 @@ def source_errors(root: Path) -> list[str]:
 
     release_text = release_workflow.read_text(encoding="utf-8")
     validate_text = validate_workflow.read_text(encoding="utf-8")
-    release_policy = "\n".join(
-        line for line in release_text.splitlines() if not line.lstrip().startswith("#")
-    )
-    validate_policy = "\n".join(
-        line for line in validate_text.splitlines() if not line.lstrip().startswith("#")
-    )
+    release_policy = workflow_policy(release_text)
+    validate_policy = workflow_policy(validate_text)
+    release_triggers = top_level_block(release_policy, "on")
+    validate_triggers = top_level_block(validate_policy, "on")
+    release_permissions = top_level_block(release_policy, "permissions")
+    validate_permissions = top_level_block(validate_policy, "permissions")
     errors.extend(workflow_action_errors(release_workflow))
     errors.extend(workflow_action_errors(validate_workflow))
     if "concurrency:" not in release_policy or "group: production-release" not in release_policy:
         errors.append("release-zip.yml must serialize production releases")
-    if 'branches: ["main"]' not in release_policy or "contents: write" not in release_policy:
+    if 'branches: ["main"]' not in release_triggers or not re.fullmatch(
+        r"permissions:\n\s+contents:\s*write", release_permissions
+    ):
         errors.append("release-zip.yml must run from main with release write permission")
+    if "if: github.ref == 'refs/heads/main'" not in release_policy:
+        errors.append("release-zip.yml must guard manual releases to refs/heads/main")
     if "overwrite_files: true" not in release_policy:
         errors.append("release-zip.yml must explicitly overwrite the rolling site.zip asset")
     if "replace_assets:" in release_policy:
         errors.append("release-zip.yml contains the unsupported replace_assets input")
     if "scripts/validate_site.py --site _site" not in release_policy:
         errors.append("release-zip.yml must validate generated output before packaging")
-    if "contents: read" not in validate_policy or "contents: write" in validate_policy:
+    if not re.fullmatch(r"permissions:\n\s+contents:\s*read", validate_permissions):
         errors.append("validate.yml must use read-only repository permissions")
     for trigger in ('"feature/**"', '"feat/**"', "pull_request:", "workflow_dispatch:"):
-        if trigger not in validate_policy:
+        if trigger not in validate_triggers:
             errors.append(f"validate.yml is missing required trigger: {trigger}")
     if "actions/upload-artifact@" not in validate_policy:
         errors.append("validate.yml must upload a preview artifact")

@@ -39,6 +39,16 @@ class GeneratedSiteValidationTests(unittest.TestCase):
         self.write(site, "robots.txt", "User-agent: *\nAllow: /\n")
         return site, config
 
+    def source_fixture(self, root: Path) -> None:
+        repository = SCRIPT.parents[1]
+        for relative in (
+            "_config.yml",
+            "_config_prod.yml",
+            ".github/workflows/release-zip.yml",
+            ".github/workflows/validate.yml",
+        ):
+            self.write(root, relative, (repository / relative).read_text(encoding="utf-8"))
+
     def test_valid_generated_site_passes(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             site, config = self.valid_fixture(Path(temporary))
@@ -107,6 +117,39 @@ class GeneratedSiteValidationTests(unittest.TestCase):
             self.write(site, "section/html/card.html", '<img src="../images/photo.png">')
             errors = validator.generated_errors(site, config)
             self.assertTrue(any("when included from section/index.html" in error for error in errors), errors)
+
+    def test_manual_release_requires_main_guard(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.source_fixture(root)
+            release = root / ".github/workflows/release-zip.yml"
+            release.write_text(
+                release.read_text(encoding="utf-8").replace(
+                    "    if: github.ref == 'refs/heads/main'\n", ""
+                ),
+                encoding="utf-8",
+            )
+            errors = validator.source_errors(root)
+            self.assertTrue(any("guard manual releases" in error for error in errors), errors)
+
+    def test_commented_permission_text_cannot_spoof_policy(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.source_fixture(root)
+            workflow = root / ".github/workflows/validate.yml"
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    "permissions:\n  contents: read",
+                    "permissions: write-all # contents: read",
+                ),
+                encoding="utf-8",
+            )
+            errors = validator.source_errors(root)
+            self.assertTrue(any("read-only repository permissions" in error for error in errors), errors)
+
+    def test_workflow_comment_stripping_preserves_quoted_hash(self) -> None:
+        policy = validator.workflow_policy('name: "value # retained" # removed\n# contents: read')
+        self.assertEqual('name: "value # retained"', policy)
 
     def test_source_config_parser_reads_scalars_and_lists(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
